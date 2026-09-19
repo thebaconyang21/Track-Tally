@@ -17,25 +17,34 @@ export default function RecordPaymentScreen({ route, navigation }) {
 
   const currentBalance = getCustomerBalance(customerId);
 
-  function handleSave() {
-    const value = parseFloat(amount);
-    if (isNaN(value) || value <= 0) {
-      Alert.alert('Invalid amount', 'Enter a payment amount greater than 0.');
-      return;
+    function handleSave() {
+    const trimmed = amount.trim();
+    // Reject anything that isn't a plain number with up to 2 decimals —
+    // catches stray periods, letters, or multiple decimal points before
+    // parseFloat would otherwise silently mangle them.
+    if (!/^\d+(\.\d{1,2})?$/.test(trimmed)) {
+        Alert.alert('Invalid amount', 'Enter a valid amount, e.g. 50 or 50.00');
+        return;
+    }
+
+    const value = parseFloat(trimmed);
+    if (value <= 0) {
+        Alert.alert('Invalid amount', 'Enter a payment amount greater than 0.');
+        return;
     }
     if (value > currentBalance) {
-      Alert.alert(
+        Alert.alert(
         'Overpayment',
         `Balance is only ${formatPeso(currentBalance)}. Continue anyway?`,
         [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Continue', onPress: () => savePayment(value) },
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Continue', onPress: () => savePayment(value) },
         ]
-      );
-      return;
+        );
+        return;
     }
     savePayment(value);
-  }
+    }
 
   function savePayment(value) {
     insertPayment({ customer_id: customerId, amount: value, method, note: note.trim() });

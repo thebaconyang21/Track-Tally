@@ -40,11 +40,12 @@ export default function ProductFormScreen({ route, navigation }) {
       Alert.alert('Missing info', 'Product name is required.');
       return;
     }
-    const price = parseFloat(unitPrice);
-    if (isNaN(price) || price < 0) {
-      Alert.alert('Invalid price', 'Enter a valid selling price.');
-      return;
+    if (!/^\d+(\.\d{1,2})?$/.test(unitPrice.trim())) {
+        Alert.alert('Invalid price', 'Enter a valid selling price, e.g. 15 or 15.50');
+        return;
     }
+
+    const price = parseFloat(unitPrice);
 
     const payload = {
       name: name.trim(),
