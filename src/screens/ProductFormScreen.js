@@ -1,3 +1,4 @@
+import { insertProduct, updateProduct, getProductById, deactivateProduct, adjustStock } from '../db/products';
 import { useState, useEffect } from 'react';
 import { View, ScrollView, Alert, StyleSheet } from 'react-native';
 import FormInput from '../components/FormInput';
@@ -78,6 +79,24 @@ export default function ProductFormScreen({ route, navigation }) {
     ]);
   }
 
+  function handleRestock() {
+    Alert.prompt(
+        'Restock',
+        `Add how many units of "${name}"?`,
+        (input) => {
+        const qty = parseFloat(input);
+        if (!isNaN(qty) && qty > 0) {
+            adjustStock(productId, qty);
+            Alert.alert('Stock updated');
+            navigation.goBack();
+        }
+        },
+        'plain-text',
+        '',
+        'number-pad'
+    );
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <FormInput label="Product name" value={name} onChangeText={setName} placeholder="e.g. Kopiko Candy" />
@@ -115,6 +134,7 @@ export default function ProductFormScreen({ route, navigation }) {
       />
 
       <PrimaryButton title={isEditing ? 'Save Changes' : 'Add Product'} onPress={handleSave} />
+      {isEditing && <PrimaryButton title="Restock" onPress={handleRestock} />}
       {isEditing && <PrimaryButton title="Remove Product" onPress={handleDelete} variant="danger" />}
     </ScrollView>
   );
