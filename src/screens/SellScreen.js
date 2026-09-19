@@ -16,6 +16,7 @@ export default function SellScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       setProducts(getProducts());
+      setCart({}); // always start with an empty cart when this screen gains focus
     }, [])
   );
 
