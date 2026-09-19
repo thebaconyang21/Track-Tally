@@ -4,6 +4,7 @@ import { View, ScrollView, Alert, StyleSheet } from 'react-native';
 import FormInput from '../components/FormInput';
 import PrimaryButton from '../components/PrimaryButton';
 import { colors } from '../theme/colors';
+import PromptModal from '../components/PromptModal';
 
 export default function ProductFormScreen({ route, navigation }) {
   const { productId } = route.params;
@@ -16,6 +17,7 @@ export default function ProductFormScreen({ route, navigation }) {
   const [costPrice, setCostPrice] = useState('');
   const [stockQty, setStockQty] = useState('');
   const [reorderLevel, setReorderLevel] = useState('');
+  const [restockVisible, setRestockVisible] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({ title: isEditing ? 'Edit Product' : 'Add Product' });
@@ -79,21 +81,17 @@ export default function ProductFormScreen({ route, navigation }) {
   }
 
   function handleRestock() {
-    Alert.prompt(
-        'Restock',
-        `Add how many units of "${name}"?`,
-        (input) => {
-        const qty = parseFloat(input);
-        if (!isNaN(qty) && qty > 0) {
-            adjustStock(productId, qty);
-            Alert.alert('Stock updated');
-            navigation.goBack();
-        }
-        },
-        'plain-text',
-        '',
-        'number-pad'
-    );
+    setRestockVisible(true);
+    }
+
+    function confirmRestock(input) {
+    const qty = parseFloat(input);
+    setRestockVisible(false);
+    if (!isNaN(qty) && qty > 0) {
+        adjustStock(productId, qty);
+        Alert.alert('Stock updated', `Added ${qty} units.`);
+        navigation.goBack();
+    }
   }
 
   return (
@@ -135,6 +133,15 @@ export default function ProductFormScreen({ route, navigation }) {
       <PrimaryButton title={isEditing ? 'Save Changes' : 'Add Product'} onPress={handleSave} />
       {isEditing && <PrimaryButton title="Restock" onPress={handleRestock} />}
       {isEditing && <PrimaryButton title="Remove Product" onPress={handleDelete} variant="danger" />}
+
+      <PromptModal
+        visible={restockVisible}
+        title="Restock"
+        message={`Add how many units of "${name}"?`}
+        keyboardType="number-pad"
+        onCancel={() => setRestockVisible(false)}
+        onConfirm={confirmRestock}
+      />
     </ScrollView>
   );
 }
