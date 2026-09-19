@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { View, ScrollView, Alert, StyleSheet } from 'react-native';
 import FormInput from '../components/FormInput';
 import PrimaryButton from '../components/PrimaryButton';
-import { insertProduct, updateProduct, getProductById, deactivateProduct } from '../db/products';
 import { colors } from '../theme/colors';
 
 export default function ProductFormScreen({ route, navigation }) {
