@@ -125,7 +125,7 @@ export default function ReportsScreen() {
       </View>
 
       {activeTab === 'Sales' && dailySummary && (
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.sectionTitle}>Today's Summary</Text>
           <View style={styles.statRow}>
             <StatCard label="Cash Sales" value={formatPeso(dailySummary.cashTotal)} />
@@ -154,11 +154,11 @@ export default function ReportsScreen() {
               </View>
             )}
           />
-        </View>
+        </ScrollView>
       )}
 
       {activeTab === 'Unpaid' && (
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.sectionTitle}>
             Unpaid Balances ({unpaid.length} debtor{unpaid.length !== 1 ? 's' : ''})
           </Text>
@@ -181,11 +181,11 @@ export default function ReportsScreen() {
               </View>
             )}
           />
-        </View>
+        </ScrollView>
       )}
 
       {activeTab === 'History' && (
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.rangeRow}>
             {['Today', 'Last 7 days'].map((label) => (
               <TouchableOpacity
@@ -218,11 +218,11 @@ export default function ReportsScreen() {
               </View>
             )}
           />
-        </View>
+        </ScrollView>
       )}
 
       {activeTab === 'Backup' && (
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.sectionTitle}>Data Backup</Text>
           <Text style={styles.emptyText}>
             Export all your records to a file you can save to Google Drive, email, or Messenger.
@@ -234,7 +234,7 @@ export default function ReportsScreen() {
           <TouchableOpacity style={[styles.backupButton, styles.restoreButton]} onPress={handleImport}>
             <Text style={styles.backupButtonText}>Restore from Backup</Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
       )}
     </View>
   );
