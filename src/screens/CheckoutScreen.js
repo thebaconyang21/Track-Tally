@@ -44,8 +44,8 @@ export default function CheckoutScreen({ route, navigation }) {
         { text: 'OK', onPress: () => navigation.navigate('SellHome') },
       ]);
     } catch (err) {
-      Alert.alert('Error', 'Could not save this sale. Please try again.');
-      console.log('createSale error:', err);
+    Alert.alert('Could not complete sale', err.message || 'Please check stock and try again.');
+    console.log('createSale error:', err);
     } finally {
       setSaving(false);
     }
