@@ -9,8 +9,13 @@ import {
 import { colors } from '../theme/colors';
 import { formatPeso } from '../utils/format';
 import StatCard from '../components/StatCard';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import * as DocumentPicker from 'expo-document-picker';
+import { exportAllData, importAllData } from '../db/backup';
 
-const TABS = ['Daily Sales', 'Unpaid Balances', 'History'];
+const TABS = ['Daily Sales', 'Unpaid Balances', 'History', 'Backup'];
 
 // Formats a date range label like "Today" or a readable date, and
 // returns ISO start/end strings for the history query below.
@@ -52,6 +57,55 @@ export default function ReportsScreen() {
     const range = label === 'Today' ? getTodayRange() : getLast7DaysRange();
     setHistory(getTransactionHistory(range.start, range.end));
   }
+
+  async function handleExport() {
+    try {
+        const data = exportAllData();
+        const json = JSON.stringify(data, null, 2);
+        const fileUri = FileSystem.documentDirectory + `tracktally-backup-${Date.now()}.json`;
+        await FileSystem.writeAsStringAsync(fileUri, json);
+
+        const canShare = await Sharing.isAvailableAsync();
+        if (canShare) {
+        await Sharing.shareAsync(fileUri);
+        } else {
+        Alert.alert('Backup saved', `Saved to: ${fileUri}`);
+        }
+    } catch (err) {
+        Alert.alert('Backup failed', 'Could not create backup file.');
+        console.log('Export error:', err);
+    }
+  }
+
+    async function handleImport() {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' });
+            if (result.canceled) return;
+
+            const fileUri = result.assets[0].uri;
+            const content = await FileSystem.readAsStringAsync(fileUri);
+            const data = JSON.parse(content);
+
+            Alert.alert(
+            'Restore backup?',
+            'This will REPLACE all current data with the backup file. This cannot be undone.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                text: 'Restore',
+                style: 'destructive',
+                onPress: () => {
+                    importAllData(data);
+                    Alert.alert('Restore complete', 'Restart the app to see restored data.');
+                },
+                },
+            ]
+            );
+        } catch (err) {
+            Alert.alert('Restore failed', 'Could not read that backup file.');
+            console.log('Import error:', err);
+        }
+    }
 
   return (
     <View style={styles.container}>
@@ -161,8 +215,24 @@ export default function ReportsScreen() {
               </View>
             )}
           />
-        </View>
-      )}
+
+        {activeTab === 'Backup' && (
+            <View style={styles.content}>
+            <Text style={styles.sectionTitle}>Data Backup</Text>
+            <Text style={styles.emptyText}>
+                Export all your records to a file you can save to Google Drive, email, or Messenger.
+                Restoring replaces everything currently on this device.
+            </Text>
+            <TouchableOpacity style={styles.backupButton} onPress={handleExport}>
+                <Text style={styles.backupButtonText}>Export Backup</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.backupButton, styles.restoreButton]} onPress={handleImport}>
+                <Text style={styles.backupButtonText}>Restore from Backup</Text>
+            </TouchableOpacity>
+            </View>
+        )}
+            </View>
+        )}
     </View>
   );
 }
@@ -192,4 +262,10 @@ const styles = StyleSheet.create({
   rangeChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
   rangeText: { fontSize: 12, color: colors.textMuted, fontWeight: '600' },
   rangeTextActive: { color: '#fff' },
+    backupButton: {
+    backgroundColor: colors.primary, borderRadius: 8, paddingVertical: 14,
+    alignItems: 'center', marginTop: 16,
+  },
+  restoreButton: { backgroundColor: colors.danger },
+  backupButtonText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 });
