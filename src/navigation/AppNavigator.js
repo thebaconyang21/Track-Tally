@@ -9,6 +9,7 @@ import DebtorFormScreen from '../screens/DebtorFormScreen';
 import DebtorDetailScreen from '../screens/DebtorDetailScreen';
 import RecordPaymentScreen from '../screens/RecordPaymentScreen';
 import SellScreen from '../screens/SellScreen';
+import CheckoutScreen from '../screens/CheckoutScreen';
 import InventoryScreen from '../screens/InventoryScreen';
 import ProductFormScreen from '../screens/ProductFormScreen';
 import ReportsScreen from '../screens/ReportsScreen';
@@ -17,6 +18,7 @@ import { colors } from '../theme/colors';
 const Tab = createBottomTabNavigator();
 const InventoryStack = createNativeStackNavigator();
 const DebtorsStack = createNativeStackNavigator();
+const SellStack = createNativeStackNavigator();
 
 function InventoryStackScreen() {
   return (
@@ -33,12 +35,17 @@ function DebtorsStackScreen() {
       <DebtorsStack.Screen name="DebtorsList" component={DebtorsScreen} options={{ title: 'Debtors' }} />
       <DebtorsStack.Screen name="DebtorForm" component={DebtorFormScreen} />
       <DebtorsStack.Screen name="DebtorDetail" component={DebtorDetailScreen} />
-      <DebtorsStack.Screen
-        name="RecordPayment"
-        component={RecordPaymentScreen}
-        options={{ title: 'Record Payment' }}
-      />
+      <DebtorsStack.Screen name="RecordPayment" component={RecordPaymentScreen} options={{ title: 'Record Payment' }} />
     </DebtorsStack.Navigator>
+  );
+}
+
+function SellStackScreen() {
+  return (
+    <SellStack.Navigator>
+      <SellStack.Screen name="SellHome" component={SellScreen} options={{ title: 'Sell' }} />
+      <SellStack.Screen name="Checkout" component={CheckoutScreen} options={{ title: 'Checkout' }} />
+    </SellStack.Navigator>
   );
 }
 
@@ -70,7 +77,7 @@ export default function AppNavigator() {
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Debtors" component={DebtorsStackScreen} options={{ headerShown: false }} />
-        <Tab.Screen name="Sell" component={SellScreen} />
+        <Tab.Screen name="Sell" component={SellStackScreen} options={{ headerShown: false }} />
         <Tab.Screen name="Inventory" component={InventoryStackScreen} options={{ headerShown: false }} />
         <Tab.Screen name="Reports" component={ReportsScreen} />
       </Tab.Navigator>
