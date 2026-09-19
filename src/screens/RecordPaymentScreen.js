@@ -14,6 +14,7 @@ export default function RecordPaymentScreen({ route, navigation }) {
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState('cash');
   const [note, setNote] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const currentBalance = getCustomerBalance(customerId);
 
@@ -46,10 +47,12 @@ export default function RecordPaymentScreen({ route, navigation }) {
     savePayment(value);
     }
 
-  function savePayment(value) {
+    function savePayment(value) {
+    if (saving) return; // ignore a second tap while the first is still processing
+    setSaving(true);
     insertPayment({ customer_id: customerId, amount: value, method, note: note.trim() });
     navigation.goBack();
-  }
+    }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -80,7 +83,7 @@ export default function RecordPaymentScreen({ route, navigation }) {
 
       <FormInput label="Note (optional)" value={note} onChangeText={setNote} placeholder="e.g. bayad kinsenas" />
 
-      <PrimaryButton title="Record Payment" onPress={handleSave} />
+      <PrimaryButton title={saving ? 'Saving...' : 'Record Payment'} onPress={handleSave} disabled={saving} loading={saving} />
     </ScrollView>
   );
 }
