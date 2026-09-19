@@ -5,6 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
 import DebtorsScreen from '../screens/DebtorsScreen';
+import DebtorFormScreen from '../screens/DebtorFormScreen';
+import DebtorDetailScreen from '../screens/DebtorDetailScreen';
+import RecordPaymentScreen from '../screens/RecordPaymentScreen';
 import SellScreen from '../screens/SellScreen';
 import InventoryScreen from '../screens/InventoryScreen';
 import ProductFormScreen from '../screens/ProductFormScreen';
@@ -13,15 +16,29 @@ import { colors } from '../theme/colors';
 
 const Tab = createBottomTabNavigator();
 const InventoryStack = createNativeStackNavigator();
+const DebtorsStack = createNativeStackNavigator();
 
-// Wraps Inventory's list + form into one stack, so the form pushes on top
-// with a back arrow, instead of replacing the whole tab.
 function InventoryStackScreen() {
   return (
     <InventoryStack.Navigator>
       <InventoryStack.Screen name="InventoryList" component={InventoryScreen} options={{ title: 'Inventory' }} />
       <InventoryStack.Screen name="ProductForm" component={ProductFormScreen} />
     </InventoryStack.Navigator>
+  );
+}
+
+function DebtorsStackScreen() {
+  return (
+    <DebtorsStack.Navigator>
+      <DebtorsStack.Screen name="DebtorsList" component={DebtorsScreen} options={{ title: 'Debtors' }} />
+      <DebtorsStack.Screen name="DebtorForm" component={DebtorFormScreen} />
+      <DebtorsStack.Screen name="DebtorDetail" component={DebtorDetailScreen} />
+      <DebtorsStack.Screen
+        name="RecordPayment"
+        component={RecordPaymentScreen}
+        options={{ title: 'Record Payment' }}
+      />
+    </DebtorsStack.Navigator>
   );
 }
 
@@ -52,13 +69,9 @@ export default function AppNavigator() {
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Debtors" component={DebtorsScreen} />
+        <Tab.Screen name="Debtors" component={DebtorsStackScreen} options={{ headerShown: false }} />
         <Tab.Screen name="Sell" component={SellScreen} />
-        <Tab.Screen
-          name="Inventory"
-          component={InventoryStackScreen}
-          options={{ headerShown: false }}
-        />
+        <Tab.Screen name="Inventory" component={InventoryStackScreen} options={{ headerShown: false }} />
         <Tab.Screen name="Reports" component={ReportsScreen} />
       </Tab.Navigator>
     </NavigationContainer>
