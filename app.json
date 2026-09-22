@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "tracktally-new",
+    "name": "Track&Tally",
     "slug": "tracktally-new",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,6 +10,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.tracktally.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -22,7 +23,16 @@
     },
     "plugins": [
       "expo-sqlite",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#F5F0E1"
+        }
+      ]
     ]
   }
 }
